@@ -1,46 +1,54 @@
-from datetime import timedelta
+from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime, timedelta
 
-# NÃO MODIFIQUE ISSO
-minimal = timedelta(hours=13, minutes=20)
+# Inicializa o Flask
+app = Flask(__name__)
 
-# nomes que vou colocar fixo
-# nomes que vou colocar fixo
-# nomes que vou colocar fixo
- 
-# O mínimo de horas é 6h e 20, usar if para análise
+# Valor mínimo de horas: 6h20m
+minimal = timedelta(hours=6, minutes=20)
 
-#-----Data aqui----#
-#var = datetime.datetime.now()
-#print("Data e hr atual:", var)
-
-#---POO prof---#
+# Classe Pessoa
 class Pessoa:
-    def __init__(self, id, nome, horas, minutos):
+    def __init__(self, id, nome, data, entrada, saida):
         self.id = id
         self.nome = nome
-        # Cria o 'score' como um timedelta com base nas horas e minutos
-        self.score = timedelta(hours=horas, minutes=minutos)
+        self.data = data
+        self.entrada = entrada
+        self.saida = saida
+        self.score = self.calcular_score()
+        self.status = "Horário correto" if self.score >= minimal else "Individuo(a)"
 
-    def mostrar_dados(self):  # Corrigi a indentação para fora do __init__
-        # Verifica se o score é menor que o valor mínimo (6h20m)
-        if self.score < minimal:
-            status = "Individuo(a)"
-        else:
-            status = "Horario correto"
-        
-        print(f"id: {self.id}")
-        print(f"Nome: {self.nome}")
-        print(f"score: {self.score}")
-        print(f"Status: {status}")
-        print("---------------------")
+    def calcular_score(self):
+        formato = "%H:%M"
+        entrada_dt = datetime.strptime(self.entrada, formato)
+        saida_dt = datetime.strptime(self.saida, formato)
+        return saida_dt - entrada_dt
 
-# Criando instâncias de Pessoa com 4 argumentos: id, nome, horas e minutos
-p1 = Pessoa(1, "Prof1", 20, 20)  # 20 horas e 20 minutos
-p2 = Pessoa(2, "Prof2", 15, 30)  # 15 horas e 30 minutos
-p3 = Pessoa(3, "Prof3", 3, 30)   # 3 horas e 30 minutos
+# Criação da lista de pessoas fora da função
+pessoas = [
+    Pessoa(1, "Prof1", "2025-02-25", "08:00", "14:20"),
+    Pessoa(2, "Prof2", "2025-02-25", "09:00", "15:30"),
+    Pessoa(3, "Prof3", "2025-02-25", "10:00", "13:30")
+]
 
-# Mostrando os dados de cada pessoa
-p1.mostrar_dados()
-p2.mostrar_dados()
-p3.mostrar_dados()
+# Rota principal
+@app.route('/')
+def index():
+    return render_template('index.html', pessoas=pessoas)  # Passando a lista para o template
 
+# Rota para salvar o tempo
+@app.route('/salvar_tempo', methods=['POST'])
+def salvar_tempo():
+    nome = request.form['nome']
+    data = request.form['data']
+    entrada = request.form['entrada']
+    saida = request.form['saida']
+    
+    # Adicionando nova pessoa à lista
+    nova_pessoa = Pessoa(len(pessoas) + 1, nome, data, entrada, saida)
+    pessoas.append(nova_pessoa)
+    
+    return redirect(url_for('index'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
