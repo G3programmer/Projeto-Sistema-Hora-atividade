@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pessoas e Status</title>
+    <link rel="stylesheet" href="/src/css/index.css">
+    <link rel="stylesheet" href="src/css/style.css">
+</head>
+
+<body>
+    <main class="home">
+        <h1>Informações das Pessoas</h1>
+        <table class="dashboard" border="1">
+            <thead>
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Entrada</th>
+                    <th scope="col">Saída</th>
+                    <th scope="col">Horas feitas</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Obs</th>
+                </tr>
+            </thead>
+            <tbody id="pessoasTableBody" class="datas">
+                <!-- Conteúdo gerado dinamicamente -->
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Modal -->
+    <div id="obsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Histórico de Observações</h2>
+            <div id="obsHistory"></div>
+            <form id="obsForm">
+                <input type="hidden" id="pessoaId" name="id">
+                <label for="newObs">Nova Observação:</label>
+                <input type="text" id="newObs" name="obs">
+                <label for="newDate">Data:</label>
+                <input type="date" id="newDate" name="date">
+                <label for="newEntrada">Entrada:</label>
+                <input type="time" id="newEntrada" name="entrada">
+                <label for="newSaida">Saída:</label>
+                <input type="time" id="newSaida" name="saida">
+                <button type="submit">Adicionar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="src/js/index.js"></script>
+</body>
+
+</html>
