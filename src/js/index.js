@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newDateInput = document.getElementById('newDate');
     const newEntradaInput = document.getElementById('newEntrada');
     const newSaidaInput = document.getElementById('newSaida');
+    const calendarDiv = document.getElementById('calendar'); // Div do calendário
 
     // Carregar dados do localStorage
     localStorage.removeItem('pessoas'); // Apaga os dados antigos
@@ -15,79 +16,76 @@ document.addEventListener('DOMContentLoaded', () => {
     let pessoas = JSON.parse(localStorage.getItem('pessoas')) || [
         {
             nome: "Angela",
-            data: "Segunda e quarta",
-            entrada: "13:00",
-            saida: "15:40",
-            horasFeitas: "00:00:00",
+            datas: {
+                segunda: { entrada: "13:00", saida: "15:40" },
+                quarta: { entrada: "13:00", saida: "15:40" },
+            },
             status: "",
-            obs: [""]
+            obs: []
         },
         {
             nome: "Silvana",
-            dias: {
+            datas: {
                 segunda: { entrada: "13:00", saida: "15:40" },
-                terca: { entrada: "14:00", saida: "16:30" },
+                terca: { entrada: "13:00", saida: "15:40" },
             },
-            horasFeitas: "00:00:00",
             status: "",
             obs: [""]
         },
         {
             nome: "Lia",
-            data: "Segunda e sexta",
-            entrada: "13:00",
-            saida: "14:20",
-            horasFeitas: "00:00:00",
+            datas: {
+                segunda: { entrada: "13:00", saida: "15:40" },
+                sexta: { entrada: "13:00", saida: "15:40" },
+            },
             status: "",
             obs: [""]
         },
         {
             nome: "Katriane",
-            data: "Segunda e quarta",
-            entrada: "13:00",
-            saida: "15:40",
-            horasFeitas: "00:00:00",
+            datas: {
+                segunda: { entrada: "13:00", saida: "15:40" },
+                quarta: { entrada: "13:00", saida: "15:40" },
+            },
             status: "",
             obs: [""]
         },
         {
             nome: "Pamela",
-            data: "Segunda e quarta",
-            entrada: "13:00",
-            saida: "15:40",
-            horasFeitas: "00:00:00",
+            datas: {
+                segunda: { entrada: "13:00", saida: "15:40" },
+                quarta: { entrada: "13:00", saida: "15:40" },
+            },
             status: "",
             obs: [""]
         },
         {
             nome: "Márcia",
-            data: "Terça e quinta",
-            entrada: "13:00",
-            saida: "15:40",
-            horasFeitas: "00:00:00",
+            datas: {
+                terca: { entrada: "13:00", saida: "15:40" },
+                quinta: { entrada: "13:00", saida: "15:40" },
+            },
             status: "",
             obs: [""]
         },
         {
             nome: "Monaliza",
-            data: "Terça e quinta",
-            entrada: "13:00",
-            saida: "15:40",
-            horasFeitas: "00:00:00",
+            datas: {
+                terca: { entrada: "13:00", saida: "15:40" },
+                quinta: { entrada: "13:00", saida: "15:40" },
+            },
             status: "",
             obs: [""]
         },
         {
             nome: "Daiana",
-            data: "Terça e quinta",
-            entrada: "13:00",
-            saida: "15:40",
-            horasFeitas: "00:00:00",
+            datas: {
+                terca: { entrada: "13:00", saida: "15:40" },
+                quinta: { entrada: "13:00", saida: "15:40" },
+            },
             status: "",
             obs: [""]
         },
-        
-
     ];
 
     // Função para salvar dados no localStorage
@@ -95,17 +93,46 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('pessoas', JSON.stringify(pessoas));
     }
 
+    // Função para verificar status
+    function verificarStatus(pessoa) {
+        let horasExtras = 0;
+        let horasFaltantes = 0;
+        const metaMinutos = 2 * 60 + 40; // 2 horas e 40 minutos
+
+        for (const dia in pessoa.datas) {
+            const entrada = pessoa.datas[dia].entrada.split(':');
+            const saida = pessoa.datas[dia].saida.split(':');
+            const entradaMinutos = parseInt(entrada[0]) * 60 + parseInt(entrada[1]);
+            const saidaMinutos = parseInt(saida[0]) * 60 + parseInt(saida[1]);
+            const minutosTrabalhados = saidaMinutos - entradaMinutos;
+
+            if (minutosTrabalhados > metaMinutos) {
+                horasExtras += (minutosTrabalhados - metaMinutos);
+            } else if (minutosTrabalhados < metaMinutos) {
+                horasFaltantes += (metaMinutos - minutosTrabalhados);
+            }
+        }
+
+        if (horasFaltantes > 0) {
+            pessoa.status = `Individado em ${Math.floor(horasFaltantes / 60)} horas e ${horasFaltantes % 60} minutos`;
+        } else if (horasExtras > 0) {
+            pessoa.status = `Horas extras: ${Math.floor(horasExtras / 60)} horas e ${horasExtras % 60} minutos`;
+        } else {
+            pessoa.status = "Meta cumprida";
+        }
+    }
+
     // Função para carregar as pessoas na tabela
     function loadPessoas() {
         pessoasTableBody.innerHTML = '';
         pessoas.forEach((pessoa, index) => {
+            verificarStatus(pessoa);
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${pessoa.nome}</td>
-                <td>${pessoa.data}</td>
-                <td>${pessoa.entrada}</td>
-                <td>${pessoa.saida}</td>
-                <td>${pessoa.horasFeitas}</td>
+                <td>${Object.keys(pessoa.datas).join(', ')}</td>
+                <td>13:00</td>
+                <td>15:40</td>
                 <td>${pessoa.status}</td>
                 <td><button class="open-modal-btn" data-pessoa-id="${index}">Ver Observações</button></td>
             `;
@@ -145,9 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (novaObs && novaData && novaEntrada && novaSaida) {
             const pessoaId = pessoaIdInput.value;
             pessoas[pessoaId].obs.push(novaObs);
-            pessoas[pessoaId].data = novaData;
-            pessoas[pessoaId].entrada = novaEntrada;
-            pessoas[pessoaId].saida = novaSaida;
+            pessoas[pessoaId].datas[novaData] = { entrada: novaEntrada, saida: novaSaida };
             savePessoas(); // Salvar dados no localStorage
             const p = document.createElement('p');
             p.textContent = novaObs;
@@ -156,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newDateInput.value = ''; // Limpar campo de data
             newEntradaInput.value = ''; // Limpar campo de entrada
             newSaidaInput.value = ''; // Limpar campo de saída
+            loadPessoas(); // Recarregar a tabela
         }
     });
 
@@ -180,6 +206,45 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }
     };
+
+    function initCalendar() {
+        const calendarDiv = document.getElementById('calendar'); // Garantir que o calendário seja renderizado em um div com ID 'calendar'
+        
+        const events = pessoas.flatMap((pessoa, pessoaIndex) => {
+            return Object.keys(pessoa.datas).map(dia => {
+                const dataEvento = new Date();
+                const dataArray = dia.split('/');
+                dataEvento.setFullYear(dataArray[2], dataArray[1] - 1, dataArray[0]);
+    
+                return {
+                    title: pessoa.nome,
+                    start: dataEvento,
+                    description: pessoa.obs.join(', '),
+                    pessoaId: pessoaIndex // Adicionando o ID da pessoa como parte do evento
+                };
+            });
+        });
+    
+        const calendar = new FullCalendar.Calendar(calendarDiv, {
+            initialView: 'dayGridMonth',
+            events: events,
+            dateClick: function(info) {
+                const selectedDate = info.dateStr;
+                newDateInput.value = selectedDate;
+                
+                // Encontrar a pessoa associada à data clicada
+                const pessoaIndex = events.find(event => event.start.toISOString().split('T')[0] === selectedDate)?.pessoaId;
+                if (pessoaIndex !== undefined) {
+                    openModal(pessoaIndex); // Abrir o modal com base no ID da pessoa
+                }
+            }
+        });
+    
+        calendar.render();
+    }
+    
+
+    
 
     // Carregar as pessoas na tabela ao carregar a página
     loadPessoas();
