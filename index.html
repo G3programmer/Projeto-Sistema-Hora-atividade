@@ -7,6 +7,7 @@
     <title>Pessoas e Status</title>
     <link rel="stylesheet" href="/src/css/index.css">
     <link rel="stylesheet" href="src/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css">
 </head>
 
 <body>
@@ -16,10 +17,9 @@
             <thead>
                 <tr>
                     <th scope="col">Nome</th>
-                    <th scope="col">Data</th>
+                    <th scope="col">Dias</th>
                     <th scope="col">Entrada</th>
                     <th scope="col">Saída</th>
-                    <th scope="col">Horas feitas</th>
                     <th scope="col">Status</th>
                     <th scope="col">Obs</th>
                 </tr>
@@ -33,10 +33,13 @@
     <!-- Modal -->
     <div id="obsModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close-btn" onclick="closeModal()">&times;</span>
             <h2>Histórico de Observações</h2>
             <div id="obsHistory"></div>
+            <div id="calendar"></div>
             <form id="obsForm">
+                <div id="calendar"></div>
+
                 <input type="hidden" id="pessoaId" name="id">
                 <label for="newObs">Nova Observação:</label>
                 <input type="text" id="newObs" name="obs">
@@ -50,6 +53,12 @@
             </form>
         </div>
     </div>
+
+<!-- Link para o CSS do FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet" />
+
+<!-- Link para o JS do FullCalendar -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
 
     <script src="src/js/index.js"></script>
 </body>
