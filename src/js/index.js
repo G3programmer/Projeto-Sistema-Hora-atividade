@@ -6,18 +6,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const newObsInput = document.getElementById('newObs');
     const pessoaIdInput = document.getElementById('pessoaId');
     const newDateInput = document.getElementById('newDate');
-    const newEntradaInput = document.getElementById('newEntrada');
-    const newSaidaInput = document.getElementById('newSaida');
+    const newTotalHorasInput = document.getElementById('newTotalHoras');
 
+    // Estrutura inicial de pessoas
     let pessoas = JSON.parse(localStorage.getItem('pessoas')) || [
         {
             nome: "Angela",
-            datas: {
-                segunda: { entrada: "13:00", saida: "15:40" },
-                quarta: { entrada: "13:00", saida: "15:40" },
+            meses: {
+                janeiro: { totalHoras: "N/A", obs: [] },
+                fevereiro: { totalHoras: "N/A", obs: [] },
+                março: { totalHoras: "N/A", obs: [] },
+                abril: { totalHoras: "N/A", obs: [] },
+                maio: { totalHoras: "N/A", obs: [] },
+                junho: { totalHoras: "N/A", obs: [] },
+                julho: { totalHoras: "N/A", obs: [] },
+                agosto: { totalHoras: "N/A", obs: [] },
+                setembro: { totalHoras: "N/A", obs: [] },
+                outubro: { totalHoras: "N/A", obs: [] },
+                novembro: { totalHoras: "N/A", obs: [] },
+                dezembro: { totalHoras: "N/A", obs: [] },
             },
-            status: "",
-            obs: []
+            status: "sem registro"
         },
     ];
 
@@ -25,46 +34,76 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('pessoas', JSON.stringify(pessoas));
     }
 
-    function verificarHoras(entrada, saida) {
-        let [h1, m1] = entrada.split(":").map(Number);
-        let [h2, m2] = saida.split(":").map(Number);
-
-        let dataEntrada = new Date(0, 0, 0, h1, m1);
-        let dataSaida = new Date(0, 0, 0, h2, m2);
-
-        let diffMinutos = (dataSaida - dataEntrada) / 60000;
+    function verificarStatus(pessoa, mes) {
+        const totalHoras = pessoa.meses[mes].totalHoras;
+        const observacoes = pessoa.meses[mes].obs;
         
-        return diffMinutos;
-    }
-
-    function verificarStatus(pessoa) {
-        let minutosTrabalhadosTotal = 0;
-        const metaMinutos = 2 * 60 + 40;
-
-        // Agora, vamos calcular as horas com base nas observações
-        pessoa.obs.forEach(obs => {
-            const novaEntrada = obs.entrada;
-            const novaSaida = obs.saida;
-            
-            if (novaEntrada && novaSaida) {
-                let diffMinutos = verificarHoras(novaEntrada, novaSaida);
-                minutosTrabalhadosTotal += diffMinutos;
-            }
-        });
-
-        // Zerar status e horas ao carregar
-        if (minutosTrabalhadosTotal === 0) {
-            pessoa.status = "Nenhum horário registrado";
+        if (observacoes.length === 0 || totalHoras === "N/A") {
+            pessoa.status = "sem registro";
+            return;
+        }
+    
+        if (!totalHoras || totalHoras.trim() === "") {
+            pessoa.status = "sem registro";
+            return;
+        }
+    
+        // Extrai horas e minutos do formato "X:Y" ou "XhYmin"
+        let horas = 0;
+        let minutos = 0;
+    
+        // Verifica se o formato é X:Y
+        if (totalHoras.includes(':')) {
+            const [h, m] = totalHoras.split(':').map(num => parseInt(num.trim(), 10));
+            horas = h || 0;
+            minutos = m || 0;
         } else {
-            const diferencaMinutos = minutosTrabalhadosTotal - metaMinutos;
-            
-            if (diferencaMinutos === 0) {
-                pessoa.status = `Hora cumprida (Total: ${Math.floor(minutosTrabalhadosTotal / 60)}h${minutosTrabalhadosTotal % 60}min)`;
-            } else if (diferencaMinutos > 0) {
-                pessoa.status = `Horas extras: ${Math.floor(diferencaMinutos / 60)}h${diferencaMinutos % 60}min (Total: ${Math.floor(minutosTrabalhadosTotal / 60)}h${minutosTrabalhadosTotal % 60}min)`;
+            // Formato XhYmin
+            const partes = totalHoras.toLowerCase().split('h');
+            if (partes.length === 2) {
+                horas = parseInt(partes[0], 10);
+                minutos = parseInt(partes[1].replace('min', ''), 10) || 0;
             } else {
-                const horasFaltantes = Math.abs(diferencaMinutos);
-                pessoa.status = `Faltando: ${Math.floor(horasFaltantes / 60)}h${horasFaltantes % 60}min (Total: ${Math.floor(minutosTrabalhadosTotal / 60)}h${minutosTrabalhadosTotal % 60}min)`;
+                // Tenta extrair apenas minutos se não houver horas
+                minutos = parseInt(totalHoras.replace('min', ''), 10) || 0;
+            }
+        }
+    
+        // Verifica se os valores são válidos
+        if (isNaN(horas)) horas = 0;
+        if (isNaN(minutos)) minutos = 0;
+    
+        const totalMinutos = (horas * 60) + minutos;
+        const metaMinutos = 160; // 2h40min = 160 minutos
+    
+        // Cálculo do status baseado no total de minutos
+        if (totalMinutos === 0) {
+            pessoa.status = "sem registro";
+        } else if (totalMinutos === metaMinutos) {
+            pessoa.status = "Fechou exato as horas";
+        } else if (totalMinutos > metaMinutos) {
+            const horasExtras = totalMinutos - metaMinutos;
+            const horasExtrasH = Math.floor(horasExtras / 60);
+            const minutosExtras = horasExtras % 60;
+            
+            if (horasExtrasH > 0 && minutosExtras > 0) {
+                pessoa.status = `Horas extras: ${horasExtrasH}h${minutosExtras}min`;
+            } else if (horasExtrasH > 0) {
+                pessoa.status = `Horas extras: ${horasExtrasH}h`;
+            } else {
+                pessoa.status = `Horas extras: ${minutosExtras}min`;
+            }
+        } else {
+            const horasFaltantes = metaMinutos - totalMinutos;
+            const horasFaltantesH = Math.floor(horasFaltantes / 60);
+            const minutosFaltantes = horasFaltantes % 60;
+            
+            if (horasFaltantesH > 0 && minutosFaltantes > 0) {
+                pessoa.status = `Deve horas: ${horasFaltantesH}h${minutosFaltantes}min`;
+            } else if (horasFaltantesH > 0) {
+                pessoa.status = `Deve horas: ${horasFaltantesH}h`;
+            } else {
+                pessoa.status = `Deve horas: ${minutosFaltantes}min`;
             }
         }
     }
@@ -72,47 +111,63 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadPessoas() {
         pessoasTableBody.innerHTML = '';
         pessoas.forEach((pessoa, index) => {
-            verificarStatus(pessoa);
             const tr = document.createElement('tr');
             
-            const dias = Object.keys(pessoa.datas)
-                .filter(dia => isNaN(Date.parse(dia)))
-                .join(', ');
+            const meses = Object.keys(pessoa.meses)
+                .map(mes => `<option value="${mes}">${mes}</option>`)
+                .join('');
 
-            const primeiroDia = Object.keys(pessoa.datas)[0];
-            const entrada = pessoa.datas[primeiroDia].entrada;
-            const saida = pessoa.datas[primeiroDia].saida;
+            const selectedMonth = localStorage.getItem(`selectedMonth-${index}`) || Object.keys(pessoa.meses)[0];
+            verificarStatus(pessoa, selectedMonth);
+            const totalHoras = pessoa.meses[selectedMonth].totalHoras;
 
             tr.innerHTML = `
                 <td>${pessoa.nome}</td>
-                <td>${dias}</td>
-                <td>${entrada}</td>
-                <td>${saida}</td>
-                <td>${pessoa.status}</td>
+                <td>
+                    <select class="month-selector" data-pessoa-id="${index}">
+                        ${meses}
+                    </select>
+                </td>
+                <td class="status">${pessoa.status}</td>
                 <td><button class="open-modal-btn" data-pessoa-id="${index}">Ver Observações</button></td>
             `;
             pessoasTableBody.appendChild(tr);
+
+            tr.querySelector('.month-selector').value = selectedMonth;
+        });
+
+        document.querySelectorAll('.month-selector').forEach(selector => {
+            selector.addEventListener('change', (event) => {
+                const pessoaId = event.target.getAttribute('data-pessoa-id');
+                const selectedMonth = event.target.value;
+                const pessoa = pessoas[pessoaId];
+                const tr = event.target.closest('tr');
+                
+                verificarStatus(pessoa, selectedMonth);
+                tr.querySelector('.status').textContent = pessoa.status;
+                localStorage.setItem(`selectedMonth-${pessoaId}`, selectedMonth);
+            });
         });
     }
 
     function openModal(pessoaId) {
         pessoaIdInput.value = pessoaId;
+        const selectedMonth = document.querySelector(`.month-selector[data-pessoa-id="${pessoaId}"]`).value;
         obsHistory.innerHTML = '';
-        const observacoes = pessoas[pessoaId].obs;
+        const observacoes = pessoas[pessoaId].meses[selectedMonth].obs;
+        
         observacoes.forEach((obs, obsIndex) => {
             const p = document.createElement('p');
-            p.textContent = `${obs.texto} (Salvo em: ${obs.data}) `;
-
-            // Agora, também mostraremos as horas calculadas nas observações
-            const diffHoras = verificarHoras(obs.entrada, obs.saida);
-            p.textContent += ` | Horas: ${Math.floor(diffHoras / 60)}h ${diffHoras % 60}min`;
+            p.textContent = `Observação: ${obs.texto || 'N/A'} - Data: ${obs.data} - Total de Horas: ${obs.totalHoras}`;
 
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Excluir';
-            deleteButton.onclick = () => deleteObservacao(pessoaId, obsIndex);
+            deleteButton.onclick = () => deleteObservacao(pessoaId, selectedMonth, obsIndex);
             p.appendChild(deleteButton);
             obsHistory.appendChild(p);
         });
+
+        newTotalHorasInput.value = '';
         obsModal.style.display = 'block';
     }
 
@@ -131,52 +186,47 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const novaObs = newObsInput.value;
         const novaData = newDateInput.value;
-        const novaEntrada = newEntradaInput.value;
-        const novaSaida = newSaidaInput.value;
-
-        if (novaObs && novaData && novaEntrada && novaSaida) {
+        const novoTotalHoras = newTotalHorasInput.value;
+    
+        if (novaData && novoTotalHoras) {
             const pessoaId = pessoaIdInput.value;
-            const dataAtual = new Date().toLocaleDateString('pt-BR');
-            const diffMinutos = verificarHoras(novaEntrada, novaSaida);
-            
-            // Adiciona a observação com os horários
-            pessoas[pessoaId].obs.push({ 
-                texto: novaObs, 
-                data: dataAtual, 
-                entrada: novaEntrada, 
-                saida: novaSaida,
-                minutosTrabalhados: diffMinutos
+            const selectedMonth = document.querySelector(`.month-selector[data-pessoa-id="${pessoaId}"]`).value;
+    
+            pessoas[pessoaId].meses[selectedMonth].obs.push({ 
+                texto: novaObs || 'N/A', 
+                data: novaData, 
+                totalHoras: novoTotalHoras
             });
+    
+            pessoas[pessoaId].meses[selectedMonth].totalHoras = novoTotalHoras;
             
-            // Atualiza o status com o total de horas
-            verificarStatus(pessoas[pessoaId]);
+            // Atualizar status antes de salvar
+            verificarStatus(pessoas[pessoaId], selectedMonth);
+            
             savePessoas();
-
-            const p = document.createElement('p');
-            p.textContent = `${novaObs} (${novaData}) - Total do dia: ${Math.floor(diffMinutos / 60)}h${diffMinutos % 60}min`;
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Excluir';
-            deleteButton.onclick = () => deleteObservacao(pessoaId, pessoas[pessoaId].obs.length - 1);
-            p.appendChild(deleteButton);
-            obsHistory.appendChild(p);
-
-            // Limpa os campos
-            newObsInput.value = '';
-            newDateInput.value = '';
-            newEntradaInput.value = '';
-            newSaidaInput.value = '';
-            
-            // Atualiza a visualização
             loadPessoas();
             openModal(pessoaId);
         }
     });
+    
 
-    function deleteObservacao(pessoaId, obsIndex) {
-        pessoas[pessoaId].obs.splice(obsIndex, 1);
+    function deleteObservacao(pessoaId, mes, obsIndex) {
+        const pessoa = pessoas[pessoaId];
+        pessoa.meses[mes].obs.splice(obsIndex, 1);
+        
+        if (pessoa.meses[mes].obs.length === 0) {
+            pessoa.meses[mes].totalHoras = "N/A";
+        } else {
+            const ultimaObs = pessoa.meses[mes].obs[pessoa.meses[mes].obs.length - 1];
+            pessoa.meses[mes].totalHoras = ultimaObs.totalHoras;
+        }
+    
+        verificarStatus(pessoa, mes);
         savePessoas();
+        loadPessoas();
         openModal(pessoaId);
     }
+    
 
     document.addEventListener('click', (event) => {
         if (event.target.classList.contains('open-modal-btn')) {
