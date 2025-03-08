@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Estrutura inicial de pessoas
     let pessoas = JSON.parse(localStorage.getItem('pessoas')) || [
         {
-            nome: "Angela",
+            nome: "Anderia",
             meses: {
                 janeiro: { totalHoras: "N/A", obs: [] },
                 fevereiro: { totalHoras: "N/A", obs: [] },
@@ -28,6 +28,139 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             status: "sem registro"
         },
+
+        {
+            nome:"Angela",
+            meses: {
+                janeiro: { totalHoras: "N/A", obs: [] },
+                fevereiro: { totalHoras: "N/A", obs: [] },
+                março: { totalHoras: "N/A", obs: [] },
+                abril: { totalHoras: "N/A", obs: [] },
+                maio: { totalHoras: "N/A", obs: [] },
+                junho: { totalHoras: "N/A", obs: [] },
+                julho: { totalHoras: "N/A", obs: [] },
+                agosto: { totalHoras: "N/A", obs: [] },
+                setembro: { totalHoras: "N/A", obs: [] },
+                outubro: { totalHoras: "N/A", obs: [] },
+                novembro: { totalHoras: "N/A", obs: [] },
+                dezembro: { totalHoras: "N/A", obs: [] },
+            },
+            status: "sem registro"
+        },
+
+        {
+            nome: "Daiana",
+            meses: {
+                janeiro: { totalHoras: "N/A", obs: [] },
+                fevereiro: { totalHoras: "N/A", obs: [] },
+                março: { totalHoras: "N/A", obs: [] },
+                abril: { totalHoras: "N/A", obs: [] },
+                maio: { totalHoras: "N/A", obs: [] },
+                junho: { totalHoras: "N/A", obs: [] },
+                julho: { totalHoras: "N/A", obs: [] },
+                agosto: { totalHoras: "N/A", obs: [] },
+                setembro: { totalHoras: "N/A", obs: [] },
+                outubro: { totalHoras: "N/A", obs: [] },
+                novembro: { totalHoras: "N/A", obs: [] },
+                dezembro: { totalHoras: "N/A", obs: [] },
+            },
+            status: "sem registro"
+        },
+
+        {
+            nome:"Gizele",
+            meses: {
+                janeiro: { totalHoras: "N/A", obs: [] },
+                fevereiro: { totalHoras: "N/A", obs: [] },
+                março: { totalHoras: "N/A", obs: [] },
+                abril: { totalHoras: "N/A", obs: [] },
+                maio: { totalHoras: "N/A", obs: [] },
+                junho: { totalHoras: "N/A", obs: [] },
+                julho: { totalHoras: "N/A", obs: [] },
+                agosto: { totalHoras: "N/A", obs: [] },
+                setembro: { totalHoras: "N/A", obs: [] },
+                outubro: { totalHoras: "N/A", obs: [] },
+                novembro: { totalHoras: "N/A", obs: [] },
+                dezembro: { totalHoras: "N/A", obs: [] },
+            },
+            status: "sem registro"
+        },
+
+        {
+            nome:"Katriane",
+            meses: {
+                janeiro: { totalHoras: "N/A", obs: [] },
+                fevereiro: { totalHoras: "N/A", obs: [] },
+                março: { totalHoras: "N/A", obs: [] },
+                abril: { totalHoras: "N/A", obs: [] },
+                maio: { totalHoras: "N/A", obs: [] },
+                junho: { totalHoras: "N/A", obs: [] },
+                julho: { totalHoras: "N/A", obs: [] },
+                agosto: { totalHoras: "N/A", obs: [] },
+                setembro: { totalHoras: "N/A", obs: [] },
+                outubro: { totalHoras: "N/A", obs: [] },
+                novembro: { totalHoras: "N/A", obs: [] },
+                dezembro: { totalHoras: "N/A", obs: [] },
+            },
+            status: "sem registro"
+        },
+
+        {
+            nome:"Márcia",
+            meses: {
+                janeiro: { totalHoras: "N/A", obs: [] },
+                fevereiro: { totalHoras: "N/A", obs: [] },
+                março: { totalHoras: "N/A", obs: [] },
+                abril: { totalHoras: "N/A", obs: [] },
+                maio: { totalHoras: "N/A", obs: [] },
+                junho: { totalHoras: "N/A", obs: [] },
+                julho: { totalHoras: "N/A", obs: [] },
+                agosto: { totalHoras: "N/A", obs: [] },
+                setembro: { totalHoras: "N/A", obs: [] },
+                outubro: { totalHoras: "N/A", obs: [] },
+                novembro: { totalHoras: "N/A", obs: [] },
+                dezembro: { totalHoras: "N/A", obs: [] },
+            },
+            status: "sem registro"
+        },
+
+        {
+            nome:"Monaliza",
+            meses: {
+                janeiro: { totalHoras: "N/A", obs: [] },
+                fevereiro: { totalHoras: "N/A", obs: [] },
+                março: { totalHoras: "N/A", obs: [] },
+                abril: { totalHoras: "N/A", obs: [] },
+                maio: { totalHoras: "N/A", obs: [] },
+                junho: { totalHoras: "N/A", obs: [] },
+                julho: { totalHoras: "N/A", obs: [] },
+                agosto: { totalHoras: "N/A", obs: [] },
+                setembro: { totalHoras: "N/A", obs: [] },
+                outubro: { totalHoras: "N/A", obs: [] },
+                novembro: { totalHoras: "N/A", obs: [] },
+                dezembro: { totalHoras: "N/A", obs: [] },
+            },
+            status: "sem registro"
+        },
+
+        {
+            nome:"Pamela",
+            meses: {
+                janeiro: { totalHoras: "N/A", obs: [] },
+                fevereiro: { totalHoras: "N/A", obs: [] },
+                março: { totalHoras: "N/A", obs: [] },
+                abril: { totalHoras: "N/A", obs: [] },
+                maio: { totalHoras: "N/A", obs: [] },
+                junho: { totalHoras: "N/A", obs: [] },
+                julho: { totalHoras: "N/A", obs: [] },
+                agosto: { totalHoras: "N/A", obs: [] },
+                setembro: { totalHoras: "N/A", obs: [] },
+                outubro: { totalHoras: "N/A", obs: [] },
+                novembro: { totalHoras: "N/A", obs: [] },
+                dezembro: { totalHoras: "N/A", obs: [] },
+            },
+            status: "sem registro"
+        }
     ];
 
     function savePessoas() {
