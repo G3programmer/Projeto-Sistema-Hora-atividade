@@ -35,48 +35,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function verificarStatus(pessoa, mes) {
-        const totalHoras = pessoa.meses[mes].totalHoras;
         const observacoes = pessoa.meses[mes].obs;
         
-        if (observacoes.length === 0 || totalHoras === "N/A") {
+        if (observacoes.length === 0) {
             pessoa.status = "sem registro";
             return;
         }
     
-        if (!totalHoras || totalHoras.trim() === "") {
-            pessoa.status = "sem registro";
-            return;
-        }
+        let totalMinutos = 0;
     
-        // Extrai horas e minutos do formato "X:Y" ou "XhYmin"
-        let horas = 0;
-        let minutos = 0;
+        observacoes.forEach(obs => {
+            let horas = 0;
+            let minutos = 0;
+            const totalHoras = obs.totalHoras;
     
-        // Verifica se o formato é X:Y
-        if (totalHoras.includes(':')) {
-            const [h, m] = totalHoras.split(':').map(num => parseInt(num.trim(), 10));
-            horas = h || 0;
-            minutos = m || 0;
-        } else {
-            // Formato XhYmin
-            const partes = totalHoras.toLowerCase().split('h');
-            if (partes.length === 2) {
-                horas = parseInt(partes[0], 10);
-                minutos = parseInt(partes[1].replace('min', ''), 10) || 0;
+            if (totalHoras.includes(':')) {
+                const [h, m] = totalHoras.split(':').map(num => parseInt(num.trim(), 10));
+                horas = h || 0;
+                minutos = m || 0;
             } else {
-                // Tenta extrair apenas minutos se não houver horas
-                minutos = parseInt(totalHoras.replace('min', ''), 10) || 0;
+                const partes = totalHoras.toLowerCase().split('h');
+                if (partes.length === 2) {
+                    horas = parseInt(partes[0], 10);
+                    minutos = parseInt(partes[1].replace('min', ''), 10) || 0;
+                } else {
+                    minutos = parseInt(totalHoras.replace('min', ''), 10) || 0;
+                }
             }
-        }
     
-        // Verifica se os valores são válidos
-        if (isNaN(horas)) horas = 0;
-        if (isNaN(minutos)) minutos = 0;
+            if (isNaN(horas)) horas = 0;
+            if (isNaN(minutos)) minutos = 0;
     
-        const totalMinutos = (horas * 60) + minutos;
-        const metaMinutos = 160; // 2h40min = 160 minutos
+            totalMinutos += (horas * 60) + minutos;
+        });
     
-        // Cálculo do status baseado no total de minutos
+        const metaMinutos = 1280; // 21h20min = 1280 minutos
+    
         if (totalMinutos === 0) {
             pessoa.status = "sem registro";
         } else if (totalMinutos === metaMinutos) {

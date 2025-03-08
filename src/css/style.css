@@ -189,3 +189,22 @@ table.dashboard tr:hover {
 #obsHistory p button:hover {
     background-color: #cc0000;
 }
+
+select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    color: #333;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+select:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    outline: none;
+}
