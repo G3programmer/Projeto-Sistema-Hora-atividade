@@ -6,10 +6,10 @@
 
 body {
     overflow-x: hidden;     
-    background: rgb(3, 3, 29);
+    background: rgb(3, 3, 29) !important;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 30vh;
     align-items: center;
     justify-content: center;
     font-family: Arial, sans-serif;

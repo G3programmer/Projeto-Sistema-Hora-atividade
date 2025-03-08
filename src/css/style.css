@@ -1,3 +1,33 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;     
+    display: flex;
+    flex-direction: column;
+    min-height: 30vh;
+    
+    background: rgb(3, 3, 29) !important;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    color: #000; /* Define a cor do texto como preto */
+}
+
+p, h1 {
+    color: #000000;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+
 .home {
     display: flex;
     flex-direction: column;
